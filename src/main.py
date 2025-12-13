@@ -1,10 +1,14 @@
 from textnode import TextNode, TextType
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 def main():
-    test = HTMLNode("p", "This is a HTMLNode",)
-
-    print(test)
+    htmltest = HTMLNode("p", "This is a HTMLNode",)
+    leaftest = LeafNode("a", "This is a link", {"href": "https://www.boots.dev"})
+    parenttest = ParentNode("div", [htmltest, leaftest])
+    
+    print(htmltest)
+    print(leaftest)
+    print(parenttest)
 
 
 if __name__ == "__main__":
