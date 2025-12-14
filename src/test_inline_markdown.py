@@ -1,5 +1,5 @@
 import unittest
-from inline_markdown import split_nodes_delimiter
+from inline_markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 from textnode import TextNode, TextType
 
 class TestInlineMarkdown(unittest.TestCase):
@@ -84,3 +84,27 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             new_nodes
         )
+
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images("This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)")
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+    
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links("This is a text with a link [to boot dev](https://www.boot.dev)")
+        self.assertListEqual([("to boot dev", "https://www.boot.dev")], matches)
+    
+    def test_extract_markdown_links_with_images(self):
+        matches = extract_markdown_links("This is a text with a [link](https://example.com) and an ![image](https://i.imgur.com/zjjcJKZ.png)")
+        self.assertListEqual([("link", "https://example.com")], matches)
+    
+    def test_extract_markdown_images_with_links(self):
+        matches = extract_markdown_images("This is a text with a [link](https://example.com) and an ![image](https://i.imgur.com/zjjcJKZ.png)")
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+    
+    def test_extract_markdown_images_multiple(self):
+        matches = extract_markdown_images("This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and ![another image](https://i.imgur.com/fJRm4Vk.jpeg)")
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png"), ("another image", "https://i.imgur.com/fJRm4Vk.jpeg")], matches)
+    
+    def test_extract_markdown_links_multiple(self):
+        matches = extract_markdown_links("This is a text with a link [to boot dev](https://www.boot.dev) and [link](https://example.com)")
+        self.assertListEqual([("to boot dev", "https://www.boot.dev"), ("link", "https://example.com")], matches)
